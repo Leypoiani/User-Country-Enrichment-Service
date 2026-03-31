@@ -1,0 +1,53 @@
+name: Rollback automático - Produção
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build e testes (PROD)
+        run: ./mvnw clean verify
+
+      - name: Criar tag de release
+        run: |
+          TAG=v$(date +'%Y.%m.%d.%H%M')
+          git tag $TAG
+          git push origin $TAG
+
+  rollback:
+    needs: deploy-prod
+    if: failure()
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Buscar tags
+        run: git fetch --tags
+
+      - name: Rollback para última tag estável
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0)
+          git checkout $LAST_TAG
+          git push origin HEAD:main --force
