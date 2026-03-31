@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - 'feat/**'
-      - 'fix/**'
-      - 'hotfix/**'
       - 'feature/**'
+      - 'fix/**'
 
 jobs:
   build-test:
@@ -21,6 +20,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+
+      - name: Garantir permissão de execução do mvnw
+        run: chmod +x mvnw
 
       - name: Build e testes
         run: ./mvnw clean verify

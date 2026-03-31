@@ -22,14 +22,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Garantir permissão de execução do mvnw
+        run: chmod +x mvnw
+
       - name: Build e testes (PROD)
         run: ./mvnw clean verify
-
-      - name: Criar tag de release
-        run: |
-          TAG=v$(date +'%Y.%m.%d.%H%M')
-          git tag $TAG
-          git push origin $TAG
 
   rollback:
     needs: deploy-prod
