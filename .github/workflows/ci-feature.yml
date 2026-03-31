@@ -5,6 +5,8 @@ on:
     branches:
       - 'feat/**'
       - 'fix/**'
+      - 'hotfix/**'
+      - 'feature/**'
 
 jobs:
   build-test:
