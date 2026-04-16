@@ -1,7 +1,7 @@
 package com.project.user_country_service.service;
 
 import com.project.user_country_service.client.RandomUserClient;
-import com.project.user_country_service.dto.UsuarioDTO;
+import com.project.user_country_service.domain.Usuario;
 import com.project.user_country_service.dto.randomuser.RandomUserApiResponse;
 import com.project.user_country_service.dto.randomuser.RandomUserResult;
 import com.project.user_country_service.exception.ParametroInvalidoException;
@@ -18,13 +18,13 @@ public class UsuarioService {
         this.randomUserClient = randomUserClient;
     }
 
-    public List<UsuarioDTO> buscarUsuarios(int quantidade) {
+    public List<Usuario> buscarUsuarios(int quantidade) {
         validarQuantidade(quantidade);
 
         RandomUserApiResponse response = randomUserClient.buscarUsuarios(quantidade);
 
         return response.getResults().stream()
-                .map(this::converterParaDTO)
+                .map(this::converterParaDominio)
                 .toList();
     }
 
@@ -39,23 +39,23 @@ public class UsuarioService {
         }
     }
 
-    private UsuarioDTO converterParaDTO(RandomUserResult result) {
+    private Usuario converterParaDominio(RandomUserResult result) {
         String nomeCompleto = String.format("%s %s %s",
                 result.getName().getTitle(),
                 result.getName().getFirst(),
                 result.getName().getLast());
 
-        return UsuarioDTO.builder()
-                .nome(nomeCompleto)
-                .email(result.getEmail())
-                .genero(result.getGender())
-                .idade(result.getDob().getAge())
-                .telefone(result.getPhone())
-                .nacionalidade(result.getNat())
-                .cidade(result.getLocation().getCity())
-                .estado(result.getLocation().getState())
-                .pais(result.getLocation().getCountry())
-                .fotoUrl(result.getPicture().getLarge())
-                .build();
+        Usuario usuario = new Usuario();
+        usuario.setNome(nomeCompleto);
+        usuario.setEmail(result.getEmail());
+        usuario.setGenero(result.getGender());
+        usuario.setIdade(result.getDob().getAge());
+        usuario.setTelefone(result.getPhone());
+        usuario.setNacionalidade(result.getNat());
+        usuario.setCidade(result.getLocation().getCity());
+        usuario.setEstado(result.getLocation().getState());
+        usuario.setPais(result.getLocation().getCountry());
+        usuario.setFotoUrl(result.getPicture().getLarge());
+        return usuario;
     }
 }

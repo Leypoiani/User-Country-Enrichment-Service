@@ -1,0 +1,14 @@
+target/
+.git
+.gitignore
+.env
+.env.local
+docker-compose.override.yml
+README.md
+HELP.md
+.vscode/
+.idea/
+*.iml
+**/node_modules/
+**/.DS_Store
+.DS_Store

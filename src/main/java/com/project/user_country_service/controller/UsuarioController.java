@@ -1,6 +1,6 @@
 package com.project.user_country_service.controller;
 
-import com.project.user_country_service.dto.UsuarioDTO;
+import com.project.user_country_service.domain.Usuario;
 import com.project.user_country_service.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +21,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(
+    public ResponseEntity<List<Usuario>> buscarUsuarios(
             @RequestParam(defaultValue = "1") int quantidade) {
-        List<UsuarioDTO> usuarios = usuarioService.buscarUsuarios(quantidade);
+        List<Usuario> usuarios = usuarioService.buscarUsuarios(quantidade);
         return ResponseEntity.ok(usuarios);
     }
 }
