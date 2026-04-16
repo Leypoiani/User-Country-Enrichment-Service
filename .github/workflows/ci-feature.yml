@@ -1,0 +1,40 @@
+name: CI - Feature / Fix
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+      - 'feature/**'
+      - 'fix/**'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Garantir permissão de execução do mvnw
+        run: chmod +x mvnw
+
+      - name: Build e testes
+        run: ./mvnw clean verify
+
+      - name: Criar PR para develop
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: develop
+          branch: ${{ github.ref_name }}
+          title: "Auto PR: ${{ github.ref_name }} → develop"
+          body: |
+            Pull request criado automaticamente.
+            CI executada com sucesso para branch de feature/fix.

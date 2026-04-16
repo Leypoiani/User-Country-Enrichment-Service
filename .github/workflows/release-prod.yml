@@ -1,0 +1,35 @@
+name: Release - Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Garantir permissão de execução do mvnw
+        run: chmod +x mvnw
+
+      - name: Build e testes
+        run: ./mvnw clean verify
+
+      - name: Criar tag de release
+        run: |
+          TAG=v$(date +'%Y.%m.%d.%H%M')
+          git tag $TAG
+          git push origin $TAG
